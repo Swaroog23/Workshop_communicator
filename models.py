@@ -48,6 +48,36 @@ class User:
         else:
             return False
 
+    @staticmethod
+    def load_user_by_id(id_, cursor):
+        sql = 'SELECT id, username, hashed_password FROM Users WHERE id = %s' % id_
+        cursor.execute(sql)
+        users_data = cursor.fetchone()
+        if users_data:
+            id_, username, hashed_password = users_data
+            loaded_user = User(username)
+            loaded_user._id = id_
+            loaded_user._hashed_password = hashed_password
+            return loaded_user
+        else:
+            return None
+    
+    @staticmethod
+    def load_user_by_username(username, cursor):
+        sql = 'SELECT id, username, hashed_password FROM Users WHERE username = %s' % username
+        cursor.execute(sql)
+        users_data = cursor.fetchone()
+        if users_data:
+            id_, username, hashed_password = users_data
+            loaded_user = User(username)
+            loaded_user._id = id_
+            loaded_user._hashed_password = hashed_password
+            return loaded_user
+        else:
+            return None
+
+
+
 if __name__ == "__main__":
     user1 = User("Zeta", "DupaMaćka")
     connection = psycopg2.connect(
@@ -56,7 +86,4 @@ if __name__ == "__main__":
         host='localhost', 
         database='workshop')
     cursor = connection.cursor()
-
-    print(user1.save_to_db(cursor))
-
-    print(user1.get_id)
+    user2 = User.load_user_by_id(2, cursor)
