@@ -1,4 +1,4 @@
-import psycopg2
+import psycopg2, psycopg2.errors as pg_err
 
 USER = 'postgres'
 PASSWORD = '@DoMInio1@'
@@ -38,7 +38,7 @@ if __name__ == '__main__':
         cursor = connection.cursor()
         cursor.execute(DatabaseCreation.create_msg_table())
         connection.commit()
-    except (psycopg2.OperationalError, psycopg2.errors.DuplicateTable) as error:
+    except (psycopg2.OperationalError, pg_err.DuplicateTable) as error:
         print('ERROR OCCURED!  \n', error)
     else:
         cursor.close()
