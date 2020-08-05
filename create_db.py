@@ -21,7 +21,7 @@ class DatabaseCreation:
     @staticmethod
     def create_msg_table():
         sql_table = '''CREATE TABLE %s(%s serial primary key, \n
-            %s int not null, %s int not null, %s timestamp not null, \n
+            %s int not null, %s int not null, %s timestamp, \n
             FOREIGN KEY(%s) REFERENCES Users(id), \n
             FOREIGN KEY(%s) REFERENCES Users(id)); ''' % ('Messeges', 'id', 'from_id', 'to_id', 'creation_date', 'from_id', 'to_id')
         return sql_table

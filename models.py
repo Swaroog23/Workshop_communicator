@@ -1,6 +1,10 @@
 from hashlib_coders import hash_password
 import psycopg2
 
+
+#TO DO -> Opisy!!!!
+#Dokończyć doksy do każdej funkcji 
+
 class User:
     '''
     User class related to users table in workshop database.
@@ -52,6 +56,12 @@ class User:
             cursor.execute(sql, sql_values)
             return True
 
+    def delete_user(self, cursor):
+        sql = 'DELETE FROM Users WHERE id = %s' % self._id
+        cursor.execute(sql)
+        self._id = -1
+        return True
+
     @staticmethod
     def load_user_by_id(id_, cursor):
         sql = 'SELECT id, username, hashed_password FROM Users WHERE id = %s' % id_
@@ -93,21 +103,49 @@ class User:
             users.append(loaded_user)
         return users
 
-    def delete_user(self, cursor):
-        sql = 'DELETE FROM Users WHERE id = %s' % self._id
-        cursor.execute(sql)
+
+class Messages:
+
+    def __init__(self, from_id="", to_id="", text=''):
         self._id = -1
-        return True
+        self.from_id = from_id
+        self.to_id = to_id
+        self.text = text
+        self.creation_date = "Nic"
 
+    @property
+    def get_id(self):
+        return self._id
 
-# class Messages:
+    def save_to_db(self, cursor):
+        if self._id == -1:
+            sql = '''INSERT INTO Messeges(from_id, to_id) VALUES (%s, %s)
+            RETURNING id''' 
+            sql_values = (self.from_id, self.to_id)
+            cursor.execute(sql, sql_values)
+            self._id = cursor.fetchone()[0]
+            return True
+        else:
+            sql = '''UPDATE INTO Messeges(from_id, to_id) VALUES (%s, %s)
+            WHERE id = %s'''
+            sql_values = (self.from_id, self.to_id, self._id)
+            cursor.execute(sql, sql_values)
+            return True
 
-#     def __init__(self, )
-
-
-
-
-
+    @staticmethod
+    def load_all_messages(cursor):
+        sql = 'SELECT id, from_id, to_id, creation_date FROM Messages'
+        messages = []
+        cursor.execute(sql)
+        for row in cursor.fetchall():
+            id_, from_id, to_id, creation_date = row
+            loaded_msg = Messages()
+            loaded_msg._id = id_
+            loaded_msg.from_id = from_id
+            loaded_msg.to_id = to_id
+            loaded_msg.creation_date = creation_date
+            messages.append(loaded_msg)
+        return messages
 
 
 
