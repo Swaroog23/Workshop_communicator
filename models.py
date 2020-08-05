@@ -75,15 +75,25 @@ class User:
             return loaded_user
         else:
             return None
-
-
+    
+    @staticmethod
+    def load_all_users(cursor):
+        sql = 'SELECT id, username, hashed_password FROM Users'
+        users = []
+        cursor.execute(sql)
+        for row in cursor.fetchall():
+            id_, username, hashed_password = row
+            loaded_user = User(username)
+            loaded_user._id = id_
+            loaded_user._hashed_password = hashed_password
+            users.append(loaded_user)
+        return users
 
 if __name__ == "__main__":
-    user1 = User("Zeta", "DupaMaćka")
     connection = psycopg2.connect(
         user='postgres',
         password='@DoMInio1@', 
         host='localhost', 
         database='workshop')
     cursor = connection.cursor()
-    user2 = User.load_user_by_id(2, cursor)
+    print(User.load_all_users(cursor))
