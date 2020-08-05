@@ -46,7 +46,11 @@ class User:
             self._id = cursor.fetchone()[0]
             return True
         else:
-            return False
+            sql = '''UPDATE INTO Users(username, hashed_password) VALUES (%s, %s)
+            WHERE id = %s'''
+            sql_values = (self.username, self._hashed_password, self._id)
+            cursor.execute(sql, sql_values)
+            return True
 
     @staticmethod
     def load_user_by_id(id_, cursor):
@@ -89,6 +93,25 @@ class User:
             users.append(loaded_user)
         return users
 
+    def delete_user(self, cursor):
+        sql = 'DELETE FROM Users WHERE id = %s' % self._id
+        cursor.execute(sql)
+        self._id = -1
+        return True
+
+
+# class Messages:
+
+#     def __init__(self, )
+
+
+
+
+
+
+
+
+
 if __name__ == "__main__":
     connection = psycopg2.connect(
         user='postgres',
@@ -96,4 +119,3 @@ if __name__ == "__main__":
         host='localhost', 
         database='workshop')
     cursor = connection.cursor()
-    print(User.load_all_users(cursor))
