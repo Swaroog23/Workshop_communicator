@@ -1,5 +1,5 @@
 from hashlib_coders import hash_password
-import pscopg2
+import psycopg2
 
 class User:
     '''
@@ -38,10 +38,25 @@ class User:
         self._hashed_password = hash_password(password, salt)
 
     def save_to_db(self, cursor):
-        pass
+        if self._id == -1:
+            sql = '''INSERT INTO Users(username, hashed_password) VALUES (%s, %s)
+            RETURNING id'''
+            sql_values = (self.username, self._hashed_password)
+            cursor.execute(sql, sql_values)
+            self._id = cursor.fetchone()[0]
+            return True
+        else:
+            return False
 
 if __name__ == "__main__":
     user1 = User("Zeta", "DupaMaćka")
-    print(user1.get_hashed_password)
-    user1.set_password("GrubePaluchy1234")
-    print(user1.get_hashed_password)
+    connection = psycopg2.connect(
+        user='postgres',
+        password='@DoMInio1@', 
+        host='localhost', 
+        database='workshop')
+    cursor = connection.cursor()
+
+    print(user1.save_to_db(cursor))
+
+    print(user1.get_id)
