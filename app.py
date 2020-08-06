@@ -9,11 +9,13 @@ if __name__ == '__main__':
     parser.add_argument('-l', '--list', action='store_true' ,help='list all users')
     parser.add_argument('-e', '--edit', action='store_true', help='user edition')
     parser.add_argument('-n', '--new_pass', help='sets new password for a user')
-    parser.add_argument('-d', '--delete', action="store_true", help="delte user")
-
+    parser.add_argument('-d', '--delete', action="store_true", help="delete user")
+    #args for users
 
     args = parser.parse_args()
     
+    #connection to db
+    #TO DO: creation of database and tables if not created
     try:
         connection = psycopg2.connect(
             user='postgres',
@@ -28,18 +30,24 @@ if __name__ == '__main__':
 
 
 
+    #list containing all users in database
     base_of_users = models.User.load_all_users(cursor)
     
     #setting new password for the user
     if args.username in [usr.username for usr in base_of_users] and args.edit: 
+        
         edited_user = models.User.load_user_by_username(args.username, cursor)
+        
         if not hashlib_coders.check_password(args.password, edited_user.get_hashed_password):
             raise psycopg2.errors.UniqueViolation('Wrong password!')
+        
         else:
             if args.new_pass == None or len(args.new_pass) < 8:
                 raise psycopg2.errors.UniqueViolation('Password too short! Must be at least 8 characters long.')
+            
             elif hashlib_coders.check_password(args.new_pass, edited_user.get_hashed_password):
                 raise psycopg2.errors.UniqueViolation("New password cannot be the same as the old password!")
+            
             else:
                 edited_user.set_password(args.new_pass)
                 edited_user.save_to_db(cursor)
@@ -73,10 +81,12 @@ if __name__ == '__main__':
             print('User created!')
 
     #listing all users in database
-    if args.list:
+    elif args.list:
         for usr in base_of_users:
             print(usr.username)
-
+    
+    else:
+        parser.print_help()
 
 
 

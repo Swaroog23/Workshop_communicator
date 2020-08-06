@@ -42,6 +42,11 @@ class User:
         self._hashed_password = hash_password(password, salt)
 
     def save_to_db(self, cursor):
+        
+        """
+        Saves user to db or updates if there is user with that parameters
+        """
+        
         if self._id == -1:
             sql = '''INSERT INTO Users(username, hashed_password) VALUES (%s, %s)
             RETURNING id'''
@@ -57,13 +62,19 @@ class User:
             return True
 
     def delete_user(self, cursor):
-        sql = 'DELETE FROM Users WHERE id = %s' % self._id
-        cursor.execute(sql)
+        """Deletes user from table"""
+        
+        sql = 'DELETE FROM Users WHERE id = %s'
+        cursor.execute(sql, (self._id, ))
         self._id = -1
         return True
 
     @staticmethod
     def load_user_by_id(id_, cursor):
+        """Loads user by id.
+        Return User object with parameters taken form table
+        """
+
         sql = 'SELECT id, username, hashed_password FROM Users WHERE id = %s'
         cursor.execute(sql, (id_, ))
         users_data = cursor.fetchone()
@@ -78,6 +89,9 @@ class User:
     
     @staticmethod
     def load_user_by_username(username, cursor):
+        """Loads user by username.
+        Returns User object with parameters taken form table"""
+
         sql = 'SELECT id, username, hashed_password FROM Users WHERE username = %s' 
         cursor.execute(sql, (username, ))
         users_data = cursor.fetchone()
@@ -92,6 +106,9 @@ class User:
     
     @staticmethod
     def load_all_users(cursor):
+        """Loads all users in table.
+        Returns list of User objects"""
+
         sql = 'SELECT id, username, hashed_password FROM Users'
         users = []
         cursor.execute(sql)
@@ -115,18 +132,22 @@ class Messages:
 
     @property
     def get_id(self):
+        """Returns id of a message"""
+
         return self._id
 
     def save_to_db(self, cursor):
+        """Saves object or, if exists, updates object at Messages table"""
+    
         if self._id == -1:
-            sql = '''INSERT INTO Messeges(from_id, to_id) VALUES (%s, %s)
+            sql = '''INSERT INTO Messages(from_id, to_id) VALUES (%s, %s)
             RETURNING id''' 
             sql_values = (self.from_id, self.to_id)
             cursor.execute(sql, sql_values)
             self._id = cursor.fetchone()[0]
             return True
         else:
-            sql = '''UPDATE INTO Messeges(from_id, to_id) VALUES (%s, %s)
+            sql = '''UPDATE Messages SET from_id = %s, to_id = %s
             WHERE id = %s'''
             sql_values = (self.from_id, self.to_id, self._id)
             cursor.execute(sql, sql_values)
@@ -134,6 +155,9 @@ class Messages:
 
     @staticmethod
     def load_all_messages(cursor):
+        """Loads all messages in table
+        Returns list of Message obejcts"""
+
         sql = 'SELECT id, from_id, to_id, creation_date FROM Messages'
         messages = []
         cursor.execute(sql)
