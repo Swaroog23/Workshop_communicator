@@ -50,7 +50,7 @@ class User:
             self._id = cursor.fetchone()[0]
             return True
         else:
-            sql = '''UPDATE INTO Users(username, hashed_password) VALUES (%s, %s)
+            sql = '''UPDATE Users SET username = %s, hashed_password = %s
             WHERE id = %s'''
             sql_values = (self.username, self._hashed_password, self._id)
             cursor.execute(sql, sql_values)
@@ -64,8 +64,8 @@ class User:
 
     @staticmethod
     def load_user_by_id(id_, cursor):
-        sql = 'SELECT id, username, hashed_password FROM Users WHERE id = %s' % id_
-        cursor.execute(sql)
+        sql = 'SELECT id, username, hashed_password FROM Users WHERE id = %s'
+        cursor.execute(sql, (id_, ))
         users_data = cursor.fetchone()
         if users_data:
             id_, username, hashed_password = users_data
@@ -78,8 +78,8 @@ class User:
     
     @staticmethod
     def load_user_by_username(username, cursor):
-        sql = 'SELECT id, username, hashed_password FROM Users WHERE username = %s' % username
-        cursor.execute(sql)
+        sql = 'SELECT id, username, hashed_password FROM Users WHERE username = %s' 
+        cursor.execute(sql, (username, ))
         users_data = cursor.fetchone()
         if users_data:
             id_, username, hashed_password = users_data
