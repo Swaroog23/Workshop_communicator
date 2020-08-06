@@ -1,10 +1,5 @@
 import psycopg2, psycopg2.errors as pg_err
 
-USER = 'postgres'
-PASSWORD = '@DoMInio1@'
-HOST = 'localhost'
-
-
 class DatabaseCreation:
 
     @staticmethod
@@ -30,9 +25,9 @@ class DatabaseCreation:
 if __name__ == '__main__':
     try:
         connection = psycopg2.connect(
-            user=USER,
-            password=PASSWORD, 
-            host=HOST, 
+            user='postgres',
+            password='@DoMInio1@', 
+            host='localhost', 
             database='workshop')
 
         cursor = connection.cursor()
