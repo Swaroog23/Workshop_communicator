@@ -48,7 +48,7 @@ class DatabaseCreation:
                 %s varchar(255), \n
                 FOREIGN KEY(%s) REFERENCES Users(id), \n
                 FOREIGN KEY(%s) REFERENCES Users(id)); '''  % ('Messages', 'id', 'from_id', 'to_id', 'creation_date', 'msg', 'from_id', 'to_id')
-            # values =  ('Messages', 'id', 'from_id', 'to_id', 'creation_date', 'msg', 'from_id', 'to_id')
+            
             cursor.execute(sql_table)
             return True
         

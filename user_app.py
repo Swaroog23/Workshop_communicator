@@ -11,7 +11,6 @@ if __name__ == '__main__':
     parser.add_argument('-n', '--new_pass', help='sets new password for a user')
     parser.add_argument('-d', '--delete', action="store_true", help="delete user")
 
-
     args = parser.parse_args()
 
     print(create_db.DatabaseCreation.create_db())
@@ -119,5 +118,3 @@ if __name__ == '__main__':
         parser.print_help()
 
     connection.close()
-
-
