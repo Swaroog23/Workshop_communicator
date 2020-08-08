@@ -130,7 +130,7 @@ class Messages:
         self.text = text
         self.creation_date = ""
 
-    @property
+    
     def set_date(self, date):
         """Setting date of sending a message"""
         self.creation_date = date
