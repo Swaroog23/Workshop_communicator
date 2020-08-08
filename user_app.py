@@ -13,22 +13,26 @@ if __name__ == '__main__':
 
 
     args = parser.parse_args()
-    
+
+    print(create_db.DatabaseCreation.create_db())
+
     #connection to db
-    #TO DO: creation of database and tables if not created
-    try:
-        connection = psycopg2.connect(
+    #if already exists, it informs user about it.
+    connection = psycopg2.connect(
             user='postgres',
             password='@DoMInio1@', 
             host='localhost', 
             database='workshop')
-        cursor = connection.cursor()
-    except Exception as e:
-        print(e)
-    except (psycopg2.OperationalError, psycopg2.errors.DuplicateTable) as error:
-        print('ERROR OCCURED!  \n', error)
 
+    #Setting autocommit to True allows us to create databse if it does not exists
+    connection.autocommit = True
+    cursor = connection.cursor()
 
+    print(create_db.DatabaseCreation.create_user_table(cursor))
+    print(create_db.DatabaseCreation.create_msg_table(cursor))
+
+    #Setting autocommit to False, because we dont need it anymore
+    connection.autocommit = False
 
     #list containing all users in database
     base_of_users = models.User.load_all_users(cursor)
@@ -96,7 +100,7 @@ if __name__ == '__main__':
 
     #creating new user
     elif args.username != None:
-        
+
         if args.username in [usr.username for usr in base_of_users]:
             raise psycopg2.errors.UniqueViolation("Username is taken! Select new username")
         
@@ -114,5 +118,6 @@ if __name__ == '__main__':
     else:
         parser.print_help()
 
+    connection.close()
 
 

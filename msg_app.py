@@ -1,6 +1,6 @@
 if __name__ == '__main__':
 
-    import argparse, models, hashlib_coders, psycopg2
+    import argparse, models, hashlib_coders, psycopg2, create_db
     from datetime import datetime
 
     #args for messeges
@@ -11,17 +11,24 @@ if __name__ == '__main__':
     parser.add_argument('-s', '--send', help="send inputed message")
     parser.add_argument('-t', '--to', help='send to user')
 
+    args = parser.parse_args()
 
-
+    #connection to db
+    #if already exists, it informs user about it.
     connection = psycopg2.connect(
             user='postgres',
             password='@DoMInio1@', 
             host='localhost', 
             database='workshop')
+    #Setting autocommit to True allows us to create databse if it does not exists
+    connection.autocommit = True
     cursor = connection.cursor()
+    print(create_db.DatabaseCreation.create_db())
+    print(create_db.DatabaseCreation.create_user_table(cursor))
+    print(create_db.DatabaseCreation.create_msg_table(cursor))
+    #Setting autocommit to False, because we dont need it anymore
+    connection.autocommit = False
 
-    user1 = models.User.load_user_by_id(23, cursor)
-    user2 = models.User.load_user_by_username("Marek", cursor)
 
     #list containing all users in database
     base_of_users = models.User.load_all_users(cursor)
@@ -48,4 +55,27 @@ if __name__ == '__main__':
         return f"Message send to user: {to_user.username}"
 
 
-    
+    if args.username in [usr.username for usr in base_of_users]:
+        user = models.User.load_user_by_username(args.username, cursor)
+        if hashlib_coders.check_password(args.password, user.get_hashed_password):
+            
+            if args.list:
+                print(list_messages(user, cursor))
+
+            elif args.send and args.to:
+                
+                if args.to in [usr.username for usr in base_of_users]:
+                    reciver = models.User.load_user_by_username(args.to, cursor)
+                    print(send_message(user, reciver, args.send))
+                else:
+                    raise psycopg2.errors.UniqueViolation('Reciving user does not exist!!')
+            
+            else:
+                parser.print_help()
+
+        else:
+            raise psycopg2.errors.UniqueViolation('Wrong password!')
+    else:
+        raise psycopg2.errors.UniqueViolation('User does not exist!!')
+
+    connection.close()
