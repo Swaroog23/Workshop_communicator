@@ -61,7 +61,7 @@ if __name__ == '__main__':
         return 'User deleted!'
 
 
-
+    #checks if username and password are correct, and changes password for given user
     if args.username in [usr.username for usr in base_of_users] and args.edit: 
 
         edited_user = models.User.load_user_by_username(args.username, cursor)
@@ -73,6 +73,7 @@ if __name__ == '__main__':
             if args.new_pass == None or len(args.new_pass) < 8:
                 raise psycopg2.errors.UniqueViolation('Password too short! Must be at least 8 characters long.')
             
+            #checks if old password is same as the new, given password
             elif hashlib_coders.check_password(args.new_pass, edited_user.get_hashed_password):
                 raise psycopg2.errors.UniqueViolation("New password cannot be the same as the old password!")
             

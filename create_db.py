@@ -30,9 +30,10 @@ class DatabaseCreation:
 
         sql_table = '''CREATE TABLE %s(%s serial primary key, \n
             %s int not null, %s int not null, %s timestamp, \n
+            %s varchr(255), \n
             FOREIGN KEY(%s) REFERENCES Users(id), \n
             FOREIGN KEY(%s) REFERENCES Users(id)); ''' 
-        values =  ('Messages', 'id', 'from_id', 'to_id', 'creation_date', 'from_id', 'to_id')
+        values =  ('Messages', 'id', 'from_id', 'to_id', 'creation_date', 'msg', 'from_id', 'to_id')
         cursor.execute(sql_table, values)
         return True
 

@@ -128,7 +128,12 @@ class Messages:
         self.from_id = from_id
         self.to_id = to_id
         self.text = text
-        self.creation_date = "Nic"
+        self.creation_date = ""
+
+    @property
+    def set_date(self, date):
+        """Setting date of sending a message"""
+        self.creation_date = date
 
     @property
     def get_id(self):
@@ -140,16 +145,16 @@ class Messages:
         """Saves object or, if exists, updates object at Messages table"""
     
         if self._id == -1:
-            sql = '''INSERT INTO Messages(from_id, to_id) VALUES (%s, %s)
+            sql = '''INSERT INTO Messages(from_id, to_id, creation_date, msg) VALUES (%s, %s, %s, %s)
             RETURNING id''' 
-            sql_values = (self.from_id, self.to_id)
+            sql_values = (self.from_id, self.to_id, self.creation_date, self.text)
             cursor.execute(sql, sql_values)
             self._id = cursor.fetchone()[0]
             return True
         else:
-            sql = '''UPDATE Messages SET from_id = %s, to_id = %s
+            sql = '''UPDATE Messages SET from_id = %s, to_id = %s, creation_date = %s, msg = %s
             WHERE id = %s'''
-            sql_values = (self.from_id, self.to_id, self._id)
+            sql_values = (self.from_id, self.to_id, self.creation_date, self.text, self._id)
             cursor.execute(sql, sql_values)
             return True
 
@@ -158,16 +163,17 @@ class Messages:
         """Loads all messages in table
         Returns list of Message obejcts"""
 
-        sql = 'SELECT id, from_id, to_id, creation_date FROM Messages'
+        sql = 'SELECT id, from_id, to_id, creation_date, msg FROM Messages'
         messages = []
         cursor.execute(sql)
         for row in cursor.fetchall():
-            id_, from_id, to_id, creation_date = row
+            id_, from_id, to_id, creation_date, msg = row
             loaded_msg = Messages()
             loaded_msg._id = id_
             loaded_msg.from_id = from_id
             loaded_msg.to_id = to_id
             loaded_msg.creation_date = creation_date
+            loaded_msg.text = msg
             messages.append(loaded_msg)
         return messages
 
