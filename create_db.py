@@ -12,7 +12,7 @@ class DatabaseCreation:
 
         cnx = psycopg2.connect(
             user='postgres',
-            password='@DoMInio1@', 
+            password='Admin123', 
             host='localhost', 
             database='postgres')
         cnx.autocommit = True
@@ -46,8 +46,8 @@ class DatabaseCreation:
             sql_table = '''CREATE TABLE %s(%s serial primary key, \n
                 %s int not null, %s int not null, %s timestamp, \n
                 %s varchar(255), \n
-                FOREIGN KEY(%s) REFERENCES Users(id), \n
-                FOREIGN KEY(%s) REFERENCES Users(id)); '''  % ('Messages', 'id', 'from_id', 'to_id', 'creation_date', 'msg', 'from_id', 'to_id')
+                FOREIGN KEY(%s) REFERENCES Users(id) ON DELETE CASCADE, \n
+                FOREIGN KEY(%s) REFERENCES Users(id)) ON DELETE CASCADE; '''  % ('Messages', 'id', 'from_id', 'to_id', 'creation_date', 'msg', 'from_id', 'to_id')
             
             cursor.execute(sql_table)
             return True
@@ -56,14 +56,3 @@ class DatabaseCreation:
             return e
 
 
-
-if __name__ == "__main__":
-    connection = psycopg2.connect(
-            user='postgres',
-            password='@DoMInio1@', 
-            host='localhost', 
-            database='workshop')
-    connection.autocommit = True
-    cursor = connection.cursor()
-    # print(DatabaseCreation.create_db())
-    connection.close()

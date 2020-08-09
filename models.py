@@ -177,13 +177,3 @@ class Messages:
             messages.append(loaded_msg)
         return messages
 
-
-
-
-if __name__ == "__main__":
-    connection = psycopg2.connect(
-        user='postgres',
-        password='@DoMInio1@', 
-        host='localhost', 
-        database='workshop')
-    cursor = connection.cursor()

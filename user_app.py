@@ -19,7 +19,7 @@ if __name__ == '__main__':
     #if already exists, it informs user about it.
     connection = psycopg2.connect(
             user='postgres',
-            password='@DoMInio1@', 
+            password='Admin123', 
             host='localhost', 
             database='workshop')
 

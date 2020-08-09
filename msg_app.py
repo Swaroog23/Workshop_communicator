@@ -15,17 +15,18 @@ if __name__ == '__main__':
 
     #connection to db
     #if already exists, it informs user about it.
+    print(create_db.DatabaseCreation.create_db())
     connection = psycopg2.connect(
             user='postgres',
-            password='@DoMInio1@', 
+            password='Admin123', 
             host='localhost', 
             database='workshop')
     #Setting autocommit to True allows us to create databse if it does not exists
     connection.autocommit = True
     cursor = connection.cursor()
-    print(create_db.DatabaseCreation.create_db())
     print(create_db.DatabaseCreation.create_user_table(cursor))
     print(create_db.DatabaseCreation.create_msg_table(cursor))
+    
     #Setting autocommit to False, because we dont need it anymore
     connection.autocommit = False
 
