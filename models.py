@@ -2,9 +2,6 @@ from hashlib_coders import hash_password
 import psycopg2
 
 
-#TO DO -> Opisy!!!!
-#Dokończyć doksy do każdej funkcji 
-
 class User:
     '''
     User class related to users table in workshop database.
